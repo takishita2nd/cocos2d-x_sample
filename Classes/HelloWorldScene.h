@@ -29,6 +29,9 @@
 
 class HelloWorld : public cocos2d::Scene
 {
+private:
+    bool onTouchBegan(cocos2d::Touch*, cocos2d::Event*);
+
 public:
     static cocos2d::Scene* createScene();
 

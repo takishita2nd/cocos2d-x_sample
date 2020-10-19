@@ -86,9 +86,40 @@ bool HelloWorld::init()
     auto str = String();
     str.appendWithFormat("width %f height %f", sprite->getContentSize().width, sprite->getContentSize().height);
     label->setString(str.getCString());
+
+    auto listener1 = EventListenerTouchOneByOne::create();
+    listener1->onTouchBegan = CC_CALLBACK_2(HelloWorld::onTouchBegan, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener1, this);
+
     return true;
 }
 
+bool HelloWorld::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
+{
+    auto anime = Sprite::create("pipo-btleffect007.png");
+    if (anime == nullptr)
+    {
+        problemLoading("'pipo-btleffect007.png'");
+    }
+    else
+    {
+        this->addChild(anime, 0);
+    }
+    float frameHeight = anime->getContentSize().height;
+    float frameWidth = anime->getContentSize().width / 14.0;
+    Vector<SpriteFrame*> animFrames;
+    animFrames.reserve(14);
+    for(int i = 0; i < 14; i++) {
+        animFrames.pushBack(SpriteFrame::create("pipo-btleffect007.png", Rect(frameWidth * i,0,frameHeight,frameWidth)));
+    }
+    Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.02f);
+    Animate* animate = Animate::create(animation);
+
+    anime->setPosition(touch->getLocation().x, touch->getLocation().y);
+    anime->runAction(animate);
+
+    return true;
+}
 
 void HelloWorld::menuCloseCallback(Ref* pSender)
 {
