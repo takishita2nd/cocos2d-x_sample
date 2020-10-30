@@ -74,22 +74,32 @@ bool HelloWorld::init()
     }
     else
     {
-        // position the sprite on the center of the screen
         sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
-
-        // add the sprite as a child to this layer
         this->addChild(sprite, 0);
     }
     auto scaleRate = visibleSize.height / sprite->getContentSize().height;
     sprite->setScale(scaleRate);
 
     auto str = String();
-    str.appendWithFormat("width %f height %f", sprite->getContentSize().width, sprite->getContentSize().height);
+    str.appendWithFormat("sprite width %f height %f", sprite->getContentSize().width, sprite->getContentSize().height);
     label->setString(str.getCString());
 
     auto listener1 = EventListenerTouchOneByOne::create();
     listener1->onTouchBegan = CC_CALLBACK_2(HelloWorld::onTouchBegan, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener1, this);
+
+    auto Button = Sprite::create("btnChara.png");
+    if (Button == nullptr)
+    {
+        problemLoading("'btnChara.png'");
+    }
+    else
+    {
+        Button->setPosition(Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x, visibleSize.height + origin.y));
+        Button->setAnchorPoint(Vec2(1.0,1.0));
+        Button->setScale(3.0);
+        this->addChild(Button, 1);
+    }
 
     return true;
 }
@@ -103,7 +113,7 @@ bool HelloWorld::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
     }
     else
     {
-        this->addChild(anime, 0);
+        this->addChild(anime, 255);
     }
     float frameHeight = anime->getContentSize().height;
     float frameWidth = anime->getContentSize().width / 14.0;
