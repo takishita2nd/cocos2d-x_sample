@@ -88,17 +88,66 @@ bool HelloWorld::init()
     listener1->onTouchBegan = CC_CALLBACK_2(HelloWorld::onTouchBegan, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener1, this);
 
-    auto Button = Sprite::create("btnChara.png");
-    if (Button == nullptr)
+    float buttonScale = visibleSize.height / (visibleSize.height / 4.0);
+    float buttonBase = 0.0;
+    auto homeButton = Sprite::create("btnHome.png");
+    if (homeButton == nullptr)
+    {
+        problemLoading("'btnHome.png'");
+    }
+    else
+    {
+        homeButton->setPosition(Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x, visibleSize.height + origin.y));
+        homeButton->setAnchorPoint(Vec2(1.0,1.0));
+        homeButton->setScale(buttonScale);
+        buttonBase = visibleSize.height - homeButton->getContentSize().height * buttonScale;
+        this->addChild(homeButton, 1);
+    }
+
+    auto charaButton = Sprite::create("btnChara.png");
+    if (charaButton == nullptr)
     {
         problemLoading("'btnChara.png'");
     }
     else
     {
-        Button->setPosition(Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x, visibleSize.height + origin.y));
-        Button->setAnchorPoint(Vec2(1.0,1.0));
-        Button->setScale(3.0);
-        this->addChild(Button, 1);
+        charaButton->setPosition(Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x,
+                                      buttonBase + origin.y));
+        charaButton->setAnchorPoint(Vec2(1.0,1.0));
+        charaButton->setScale(buttonScale);
+        buttonBase -= charaButton->getContentSize().height * buttonScale;
+        this->addChild(charaButton, 1);
+    }
+
+    auto equipButton = Sprite::create("btnEquip.png");
+    if (equipButton == nullptr)
+    {
+        problemLoading("'btnEquip.png'");
+    }
+    else
+    {
+        equipButton->setPosition(Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x,
+                                      buttonBase + origin.y));
+        equipButton->setAnchorPoint(Vec2(1.0,1.0));
+        equipButton->setScale(buttonScale);
+        buttonBase -= equipButton->getContentSize().height * buttonScale;
+        this->addChild(equipButton, 1);
+    }
+
+    auto questButton = Sprite::create("btnQuest.png");
+    if (questButton == nullptr)
+    {
+        problemLoading("'btnQuest.png'");
+    }
+    else
+    {
+        auto scale = buttonBase / questButton->getContentSize().height;
+        questButton->setPosition(Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x,
+                                      buttonBase + origin.y));
+        questButton->setAnchorPoint(Vec2(1.0,1.0));
+        questButton->setScale(scale);
+
+        this->addChild(questButton, 1);
     }
 
     return true;
@@ -116,10 +165,10 @@ bool HelloWorld::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
         this->addChild(anime, 255);
     }
     float frameHeight = anime->getContentSize().height;
-    float frameWidth = anime->getContentSize().width / 14.0;
+    float frameWidth = anime->getContentSize().width / 15.0;
     Vector<SpriteFrame*> animFrames;
-    animFrames.reserve(14);
-    for(int i = 0; i < 14; i++) {
+    animFrames.reserve(15);
+    for(int i = 0; i < 15; i++) {
         animFrames.pushBack(SpriteFrame::create("pipo-btleffect007.png", Rect(frameWidth * i,0,frameHeight,frameWidth)));
     }
     Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.02f);
