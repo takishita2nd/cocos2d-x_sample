@@ -64,7 +64,7 @@ bool HelloWorld::init()
                                 origin.y + visibleSize.height - label->getContentSize().height));
 
         // add the label as a child to this layer
-        this->addChild(label, 1);
+        this->addChild(label, 10);
     }
 
     auto sprite = Sprite::create("ID003_Western-Castle_noon.jpg");
@@ -80,14 +80,12 @@ bool HelloWorld::init()
     auto scaleRate = visibleSize.height / sprite->getContentSize().height;
     sprite->setScale(scaleRate);
 
-    auto str = String();
-    str.appendWithFormat("sprite width %f height %f", sprite->getContentSize().width, sprite->getContentSize().height);
-    label->setString(str.getCString());
-
+    // タッチアニメーション
     auto listener1 = EventListenerTouchOneByOne::create();
     listener1->onTouchBegan = CC_CALLBACK_2(HelloWorld::onTouchBegan, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener1, this);
 
+    // ボタンの配置
     float buttonScale = visibleSize.height / (visibleSize.height / 4.0);
     float buttonBase = 0.0;
     auto homeButton = Sprite::create("btnHome.png");
@@ -134,6 +132,7 @@ bool HelloWorld::init()
         this->addChild(equipButton, 1);
     }
 
+    float questButtonScale;
     auto questButton = Sprite::create("btnQuest.png");
     if (questButton == nullptr)
     {
@@ -141,14 +140,78 @@ bool HelloWorld::init()
     }
     else
     {
-        auto scale = buttonBase / questButton->getContentSize().height;
+        auto questButtonScale = buttonBase / questButton->getContentSize().height;
         questButton->setPosition(Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x,
                                       buttonBase + origin.y));
         questButton->setAnchorPoint(Vec2(1.0,1.0));
-        questButton->setScale(scale);
+        questButton->setScale(questButtonScale);
 
         this->addChild(questButton, 1);
     }
+
+    // ステータスウィンドウの配置
+    auto xpos = (visibleSize.width - sprite->getContentSize().width * scaleRate) / 2.0;
+    float windowScale;
+    auto charaStatusWindow1 = Sprite::create("btn02_03_s_bl.png");
+    if (charaStatusWindow1 == nullptr)
+    {
+        problemLoading("'btn02_03_s_bl.png'");
+    }
+    else
+    {
+        charaStatusWindow1->setPosition(Vec2(xpos + origin.x,origin.y));
+        charaStatusWindow1->setAnchorPoint(Vec2(0,0));
+        windowScale = (visibleSize.height / 4) / charaStatusWindow1->getContentSize().height;
+        charaStatusWindow1->setScale(windowScale);
+
+        this->addChild(charaStatusWindow1, 1);
+    }
+
+    auto charaStatusWindow2 = Sprite::create("btn02_03_s_bl.png");
+    if (charaStatusWindow2 == nullptr)
+    {
+        problemLoading("'btn02_03_s_bl.png'");
+    }
+    else
+    {
+        charaStatusWindow2->setPosition(Vec2(xpos + origin.x ,origin.y + charaStatusWindow1->getContentSize().height * windowScale));
+        charaStatusWindow2->setAnchorPoint(Vec2(0,0));
+        charaStatusWindow2->setScale(windowScale);
+
+        this->addChild(charaStatusWindow2, 1);
+    }
+
+    auto charaStatusWindow3 = Sprite::create("btn02_03_s_bl.png");
+    if (charaStatusWindow3 == nullptr)
+    {
+        problemLoading("'btn02_03_s_bl.png'");
+    }
+    else
+    {
+        charaStatusWindow3->setPosition(Vec2(xpos + origin.x ,origin.y + charaStatusWindow1->getContentSize().height * 2 * windowScale));
+        charaStatusWindow3->setAnchorPoint(Vec2(0,0));
+        charaStatusWindow3->setScale(windowScale);
+
+        this->addChild(charaStatusWindow3, 1);
+    }
+
+    auto charaStatusWindow4 = Sprite::create("btn02_03_s_bl.png");
+    if (charaStatusWindow4 == nullptr)
+    {
+        problemLoading("'btn02_03_s_bl.png'");
+    }
+    else
+    {
+        charaStatusWindow4->setPosition(Vec2(xpos + origin.x ,origin.y + charaStatusWindow1->getContentSize().height * 3 * windowScale));
+        charaStatusWindow4->setAnchorPoint(Vec2(0,0));
+        charaStatusWindow4->setScale(windowScale);
+
+        this->addChild(charaStatusWindow4, 1);
+    }
+
+    auto str = String();
+    str.appendWithFormat("windowScale %f", windowScale);
+    label->setString(str.getCString());
 
     return true;
 }
