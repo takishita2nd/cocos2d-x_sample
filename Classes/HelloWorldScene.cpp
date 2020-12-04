@@ -151,62 +151,67 @@ bool HelloWorld::init()
 
     // ステータスウィンドウの配置
     auto xpos = (visibleSize.width - sprite->getContentSize().width * scaleRate) / 2.0;
-    float windowScale;
-    auto charaStatusWindow1 = Sprite::create("btn02_03_s_bl.png");
-    if (charaStatusWindow1 == nullptr)
-    {
-        problemLoading("'btn02_03_s_bl.png'");
-    }
-    else
-    {
-        charaStatusWindow1->setPosition(Vec2(xpos + origin.x,origin.y));
-        charaStatusWindow1->setAnchorPoint(Vec2(0,0));
-        windowScale = (visibleSize.height / 4) / charaStatusWindow1->getContentSize().height;
-        charaStatusWindow1->setScale(windowScale);
+    float windowScale = 0;
+    float windowHeight = 0;
 
-        this->addChild(charaStatusWindow1, 1);
-    }
-
-    auto charaStatusWindow2 = Sprite::create("btn02_03_s_bl.png");
-    if (charaStatusWindow2 == nullptr)
+    Sprite *charaStatusWindow[4];
+    auto chara = GameStatus::GetGameData()->Charactors->begin();
+    for(int i = 0; i < 4; i++)
     {
-        problemLoading("'btn02_03_s_bl.png'");
-    }
-    else
-    {
-        charaStatusWindow2->setPosition(Vec2(xpos + origin.x ,origin.y + charaStatusWindow1->getContentSize().height * windowScale));
-        charaStatusWindow2->setAnchorPoint(Vec2(0,0));
-        charaStatusWindow2->setScale(windowScale);
+        charaStatusWindow[i] = Sprite::create("btn02_03_s_bl.png");
+        if (charaStatusWindow[i] == nullptr)
+        {
+            problemLoading("'btn02_03_s_bl.png'");
+        }
+        else
+        {
+            if(windowScale == 0 || windowHeight == 0)
+            {
+                windowHeight = charaStatusWindow[i]->getContentSize().height;
+                windowScale = (visibleSize.height / 4) / windowHeight;
+            }
+            charaStatusWindow[i]->setPosition(Vec2(xpos + origin.x,origin.y + windowHeight * i * windowScale));
+            charaStatusWindow[i]->setAnchorPoint(Vec2(0,0));
+            charaStatusWindow[i]->setScale(windowScale);
 
-        this->addChild(charaStatusWindow2, 1);
-    }
+            this->addChild(charaStatusWindow[i], 1);
+        }
 
-    auto charaStatusWindow3 = Sprite::create("btn02_03_s_bl.png");
-    if (charaStatusWindow3 == nullptr)
-    {
-        problemLoading("'btn02_03_s_bl.png'");
-    }
-    else
-    {
-        charaStatusWindow3->setPosition(Vec2(xpos + origin.x ,origin.y + charaStatusWindow1->getContentSize().height * 2 * windowScale));
-        charaStatusWindow3->setAnchorPoint(Vec2(0,0));
-        charaStatusWindow3->setScale(windowScale);
+        auto offset = charaStatusWindow[i]->getContentSize().width / 10.0;
+        auto hpLabel = Label::createWithTTF("Hello World", "fonts/msgothic.ttc", 12);
+        if (hpLabel == nullptr)
+        {
+            problemLoading("'fonts/msgothic.ttc'");
+        }
+        else
+        {
+            hpLabel->setAnchorPoint(Vec2(0, 1));
+            hpLabel->setPosition(Vec2(origin.x + xpos + offset, origin.y + windowHeight * (i + 1) * windowScale));
 
-        this->addChild(charaStatusWindow3, 1);
-    }
+            this->addChild(hpLabel, 2);
 
-    auto charaStatusWindow4 = Sprite::create("btn02_03_s_bl.png");
-    if (charaStatusWindow4 == nullptr)
-    {
-        problemLoading("'btn02_03_s_bl.png'");
-    }
-    else
-    {
-        charaStatusWindow4->setPosition(Vec2(xpos + origin.x ,origin.y + charaStatusWindow1->getContentSize().height * 3 * windowScale));
-        charaStatusWindow4->setAnchorPoint(Vec2(0,0));
-        charaStatusWindow4->setScale(windowScale);
+            auto hpStr = String();
+            hpStr.appendWithFormat("HP : %d", chara.operator*()->MaxHp);
+            hpLabel->setString(hpStr.getCString());
+        }
 
-        this->addChild(charaStatusWindow4, 1);
+        auto MpLabel = Label::createWithTTF("Hello World", "fonts/msgothic.ttc", 12);
+        if (MpLabel == nullptr)
+        {
+            problemLoading("'fonts/msgothic.ttc'");
+        }
+        else
+        {
+            MpLabel->setAnchorPoint(Vec2(0, 1));
+            MpLabel->setPosition(Vec2(origin.x + xpos + offset, origin.y + windowHeight * (i + 1) * windowScale - hpLabel->getContentSize().height));
+
+            this->addChild(MpLabel, 2);
+
+            auto mpStr = String();
+            mpStr.appendWithFormat("MP : %d", chara.operator*()->MaxMp);
+            MpLabel->setString(mpStr.getCString());
+        }
+        chara++;
     }
 
     auto str = String();
