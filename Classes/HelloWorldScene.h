@@ -27,6 +27,7 @@
 
 #include "cocos2d.h"
 #include "GameStatusData/GameStatus.h"
+#include "UIParts/CharaWindow.h"
 
 class HelloWorld : public cocos2d::Scene
 {

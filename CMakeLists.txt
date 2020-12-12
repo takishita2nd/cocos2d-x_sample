@@ -52,12 +52,14 @@ list(APPEND GAME_SOURCE
      Classes/HelloWorldScene.cpp
      Classes/GameStatusData/Character.cpp
      Classes/GameStatusData/GameStatus.cpp
+     Classes/UIParts/CharaWindow.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
      Classes/HelloWorldScene.h
      Classes/GameStatusData/Character.h
      Classes/GameStatusData/GameStatus.h
+     Classes/UIParts/CharaWindow.h
      )
 
 if(ANDROID)

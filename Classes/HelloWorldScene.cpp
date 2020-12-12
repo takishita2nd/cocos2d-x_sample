@@ -39,6 +39,7 @@ static void problemLoading(const char* filename)
     printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in HelloWorldScene.cpp\n");
 }
 
+Label* label;
 // on "init" you need to initialize your instance
 bool HelloWorld::init()
 {
@@ -52,7 +53,7 @@ bool HelloWorld::init()
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-    auto label = Label::createWithTTF("Hello World", "fonts/msgothic.ttc", 24);
+    label = Label::createWithTTF("Hello World", "fonts/msgothic.ttc", 24);
     if (label == nullptr)
     {
         problemLoading("'fonts/msgothic.ttc'");
@@ -151,71 +152,20 @@ bool HelloWorld::init()
 
     // ステータスウィンドウの配置
     auto xpos = (visibleSize.width - sprite->getContentSize().width * scaleRate) / 2.0;
-    float windowScale = 0;
-    float windowHeight = 0;
 
-    Sprite *charaStatusWindow[4];
+    CharaWindow* window[4];
     auto chara = GameStatus::GetGameData()->Charactors->begin();
-    for(int i = 0; i < 4; i++)
-    {
-        charaStatusWindow[i] = Sprite::create("btn02_03_s_bl.png");
-        if (charaStatusWindow[i] == nullptr)
-        {
-            problemLoading("'btn02_03_s_bl.png'");
-        }
-        else
-        {
-            if(windowScale == 0 || windowHeight == 0)
-            {
-                windowHeight = charaStatusWindow[i]->getContentSize().height;
-                windowScale = (visibleSize.height / 4) / windowHeight;
-            }
-            charaStatusWindow[i]->setPosition(Vec2(xpos + origin.x,origin.y + windowHeight * i * windowScale));
-            charaStatusWindow[i]->setAnchorPoint(Vec2(0,0));
-            charaStatusWindow[i]->setScale(windowScale);
-
-            this->addChild(charaStatusWindow[i], 1);
-        }
-
-        auto offset = charaStatusWindow[i]->getContentSize().width / 10.0;
-        auto hpLabel = Label::createWithTTF("Hello World", "fonts/msgothic.ttc", 12);
-        if (hpLabel == nullptr)
-        {
-            problemLoading("'fonts/msgothic.ttc'");
-        }
-        else
-        {
-            hpLabel->setAnchorPoint(Vec2(0, 1));
-            hpLabel->setPosition(Vec2(origin.x + xpos + offset, origin.y + windowHeight * (i + 1) * windowScale));
-
-            this->addChild(hpLabel, 2);
-
-            auto hpStr = String();
-            hpStr.appendWithFormat("HP : %d", chara.operator*()->MaxHp);
-            hpLabel->setString(hpStr.getCString());
-        }
-
-        auto MpLabel = Label::createWithTTF("Hello World", "fonts/msgothic.ttc", 12);
-        if (MpLabel == nullptr)
-        {
-            problemLoading("'fonts/msgothic.ttc'");
-        }
-        else
-        {
-            MpLabel->setAnchorPoint(Vec2(0, 1));
-            MpLabel->setPosition(Vec2(origin.x + xpos + offset, origin.y + windowHeight * (i + 1) * windowScale - hpLabel->getContentSize().height));
-
-            this->addChild(MpLabel, 2);
-
-            auto mpStr = String();
-            mpStr.appendWithFormat("MP : %d", chara.operator*()->MaxMp);
-            MpLabel->setString(mpStr.getCString());
-        }
+    for(int i = 0; i < 4; i++) {
+        window[i] = new CharaWindow();
+        window[i]->setParameter(chara.operator*());
+        window[i]->setScale((visibleSize.height / 4) / window[i]->getSpriteContentSize().height);
+        window[i]->setPosition(Vec2(xpos + origin.x, origin.y + window[i]->getSize().height * i));
+        window[i]->show(this);
         chara++;
     }
 
     auto str = String();
-    str.appendWithFormat("windowScale %f", windowScale);
+    str.appendWithFormat("(%f %f)", window[0]->getSize().width, window[0]->getSize().height);
     label->setString(str.getCString());
 
     return true;
@@ -244,6 +194,10 @@ bool HelloWorld::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
 
     anime->setPosition(touch->getLocation().x, touch->getLocation().y);
     anime->runAction(animate);
+
+    auto str = String();
+    str.appendWithFormat("point (%f %f)", touch->getLocation().x, touch->getLocation().y);
+    label->setString(str.getCString());
 
     return true;
 }
