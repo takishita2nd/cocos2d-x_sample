@@ -4,16 +4,15 @@
 
 #include "Character.h"
 
-Character::Character()
+Character* createCharactor()
 {
-    MaxHp = cocos2d::random<int>(0, 100);
-    MaxMp = cocos2d::random<int>(0, 100);
-    Power = cocos2d::random<int>(0, 100);
-    Speed = cocos2d::random<int>(0, 100);
-    Magic = cocos2d::random<int>(0, 100);
-}
-
-Character::~Character()
-{
-
+    Character* character = (Character*)malloc(sizeof(Character));
+    character->MaxHp = cocos2d::random<int>(0, 100);
+    character->Hp = character->MaxHp;
+    character->MaxMp = cocos2d::random<int>(0, 100);
+    character->Mp = character->MaxMp;
+    character->Power = cocos2d::random<int>(0, 100);
+    character->Speed = cocos2d::random<int>(0, 100);
+    character->Magic = cocos2d::random<int>(0, 100);
+    return character;
 }

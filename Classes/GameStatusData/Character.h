@@ -7,8 +7,7 @@
 
 #include "cocos2d.h"
 
-class Character {
-public:
+typedef struct Character {
     int Hp;
     int MaxHp;
     int Mp;
@@ -16,10 +15,8 @@ public:
     int Power;
     int Speed;
     int Magic;
-public:
-    Character();
-    ~Character();
-};
+} Character;
 
+extern Character* createCharactor();
 
 #endif //PROJ_ANDROID_CHARACTER_H

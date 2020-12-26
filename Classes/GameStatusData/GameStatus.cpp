@@ -4,38 +4,25 @@
 
 #include "GameStatus.h"
 
-GameStatus *GameStatus::gameStatus = nullptr;
+GameStatus gameStatus;
 
-GameStatus::GameStatus()
+void createGameData()
 {
-    Charactors = new std::list<Character*>();
+    gameStatus.Charactors = new std::list<Character*>();
     for(int i = 0; i < 4; i++)
     {
-        Character *character = new Character();
-        Charactors->push_back(character);
+        Character* character = createCharactor();
+        gameStatus.Charactors->push_back(character);
     }
 }
 
-GameStatus::~GameStatus()
+void destroyDamadata()
 {
-    for(Character *character = Charactors->front(); Charactors->empty() == true; character = Charactors->front())
+    auto charactor = gameStatus.Charactors->begin();
+    for(int i = 0; i < gameStatus.Charactors->size(); i++)
     {
-        delete character;
-        Charactors->pop_front();
+        free(charactor.operator*());
+        charactor++;
     }
-    delete Charactors;
-}
-
-GameStatus * GameStatus::GetGameData()
-{
-    if(gameStatus == nullptr)
-    {
-        gameStatus = new GameStatus();
-    }
-    return gameStatus;
-}
-
-void GameStatus::Destroy()
-{
-    delete gameStatus;
+    delete gameStatus.Charactors;
 }

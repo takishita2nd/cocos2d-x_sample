@@ -9,18 +9,12 @@
 #include "Character.h"
 #include <list>
 
-class GameStatus {
-private:
-    static GameStatus *gameStatus;
-public:
+typedef struct GameStatus{
     std::list<Character*> *Charactors;
-private:
-    GameStatus();
-    ~GameStatus();
-public:
-    static GameStatus* GetGameData();
-    static void Destroy();
-};
+} GameStatus;
 
+extern GameStatus gameStatus;
+extern void createGameData();
+extern void destroyDamadata();
 
 #endif //PROJ_ANDROID_GAMESTATUS_H

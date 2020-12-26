@@ -22,14 +22,14 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "HelloWorldScene.h"
+#include "HomeScene.h"
 #include "SimpleAudioEngine.h"
 
 USING_NS_CC;
 
-Scene* HelloWorld::createScene()
+Scene* HomeScene::createScene()
 {
-    return HelloWorld::create();
+    return HomeScene::create();
 }
 
 // Print useful error message instead of segfaulting when files are not there.
@@ -41,7 +41,7 @@ static void problemLoading(const char* filename)
 
 Label* label;
 // on "init" you need to initialize your instance
-bool HelloWorld::init()
+bool HomeScene::init()
 {
     //////////////////////////////
     // 1. super init first
@@ -52,21 +52,6 @@ bool HelloWorld::init()
 
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
-    label = Label::createWithTTF("Hello World", "fonts/msgothic.ttc", 24);
-    if (label == nullptr)
-    {
-        problemLoading("'fonts/msgothic.ttc'");
-    }
-    else
-    {
-        // position the label on the center of the screen
-        label->setPosition(Vec2(origin.x + visibleSize.width/2,
-                                origin.y + visibleSize.height - label->getContentSize().height));
-
-        // add the label as a child to this layer
-        this->addChild(label, 10);
-    }
 
     auto sprite = Sprite::create("ID003_Western-Castle_noon.jpg");
     if (sprite == nullptr)
@@ -83,7 +68,7 @@ bool HelloWorld::init()
 
     // タッチアニメーション
     auto listener1 = EventListenerTouchOneByOne::create();
-    listener1->onTouchBegan = CC_CALLBACK_2(HelloWorld::onTouchBegan, this);
+    listener1->onTouchBegan = CC_CALLBACK_2(HomeScene::onTouchBegan, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener1, this);
 
     // ボタンの配置
@@ -153,26 +138,56 @@ bool HelloWorld::init()
     // ステータスウィンドウの配置
     auto xpos = (visibleSize.width - sprite->getContentSize().width * scaleRate) / 2.0;
 
-    CharaWindow* window[4];
-    auto chara = GameStatus::GetGameData()->Charactors->begin();
+    auto chara = gameStatus.Charactors->begin();
     for(int i = 0; i < 4; i++) {
-        window[i] = new CharaWindow();
-        window[i]->setParameter(chara.operator*());
-        window[i]->setScale((visibleSize.height / 4) / window[i]->getSpriteContentSize().height);
-        window[i]->setPosition(Vec2(xpos + origin.x, origin.y + window[i]->getSize().height * i));
-        window[i]->show(this);
+        window[i].sprite = cocos2d::Sprite::create("btn02_03_s_bl.png");
+        if (window[i].sprite != nullptr)
+        {
+            auto scaleRate = (visibleSize.height / 4) / window[i].sprite->getContentSize().height;
+            window[i].point = Vec2(xpos + origin.x,
+                                   origin.y + window[i].sprite->getContentSize().height * scaleRate * i);
+            window[i].size = Size(window[i].sprite->getContentSize().width * scaleRate,
+                                  window[i].sprite->getContentSize().height * scaleRate);
+            window[i].sprite->setAnchorPoint(Vec2(0,0));
+            window[i].sprite->setScale(scaleRate);
+            window[i].sprite->setPosition(window[i].point);
+            this->addChild(window[i].sprite);
+
+            window[i].HPLabel.label = Label::createWithTTF("", "fonts/msgothic.ttc", 10);
+            auto str = String();
+            str.appendWithFormat("HP:%d/%d", chara.operator*()->Hp, chara.operator*()->MaxHp);
+            window[i].HPLabel.label->setString(str.getCString());
+            window[i].HPLabel.label->setAnchorPoint(Vec2(0.0, 1.0));
+            window[i].HPLabel.point = Vec2(window[i].point.x + window[i].point.x / 10.0,
+                                           window[i].point.y + window[i].size.height - window[i].size.height / 20.0);
+            window[i].HPLabel.label->setPosition(window[i].HPLabel.point);
+            this->addChild(window[i].HPLabel.label, 10);
+
+            window[i].MPLabel.label = Label::createWithTTF("", "fonts/msgothic.ttc", 10);
+            str = String();
+            str.appendWithFormat("MP:%d/%d", chara.operator*()->Mp, chara.operator*()->MaxMp);
+            window[i].MPLabel.label->setString(str.getCString());
+            window[i].MPLabel.label->setAnchorPoint(Vec2(0.0, 1.0));
+            window[i].MPLabel.point = Vec2(window[i].point.x + window[i].point.x / 10.0,
+                    window[i].HPLabel.label->getPosition().y - window[i].HPLabel.label->getContentSize().height - window[i].size.height / 20.0);
+            window[i].MPLabel.label->setPosition(window[i].MPLabel.point);
+            this->addChild(window[i].MPLabel.label, 10);
+        }
         chara++;
     }
 
-    auto str = String();
-    str.appendWithFormat("(%f %f)", window[0]->getSize().width, window[0]->getSize().height);
-    label->setString(str.getCString());
+    detailWindow.scaleRate = visibleSize.height / window[0].sprite->getContentSize().height;
+    detailWindow.point = Vec2(xpos + origin.x + window[0].size.width, origin.y);
+    detailWindow.isShow = false;
+    detailWindow.showIndex = -1;
 
     return true;
 }
 
-bool HelloWorld::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
+bool HomeScene::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
 {
+    log("touch(%f, %f)", touch->getLocation().x, touch->getLocation().y);
+
     auto anime = Sprite::create("pipo-btleffect007.png");
     if (anime == nullptr)
     {
@@ -186,7 +201,8 @@ bool HelloWorld::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
     float frameWidth = anime->getContentSize().width / 15.0;
     Vector<SpriteFrame*> animFrames;
     animFrames.reserve(15);
-    for(int i = 0; i < 15; i++) {
+    for(int i = 0; i < 15; i++)
+    {
         animFrames.pushBack(SpriteFrame::create("pipo-btleffect007.png", Rect(frameWidth * i,0,frameHeight,frameWidth)));
     }
     Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.02f);
@@ -195,14 +211,73 @@ bool HelloWorld::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
     anime->setPosition(touch->getLocation().x, touch->getLocation().y);
     anime->runAction(animate);
 
-    auto str = String();
-    str.appendWithFormat("point (%f %f)", touch->getLocation().x, touch->getLocation().y);
-    label->setString(str.getCString());
+    if(detailWindow.isShow)
+    {
+        this->removeChild(detailWindow.sprite);
+        this->removeChild(detailWindow.HPLabel.label);
+        this->removeChild(detailWindow.MPLabel.label);
+    }
+
+    for(int i = 0; i < 4; i++)
+    {
+        if(isTouch(touch->getLocation(), &window[i]))
+        {
+            detailWindow.isShow = true;
+            if(detailWindow.showIndex == i)
+            {
+                detailWindow.showIndex = -1;
+                break;
+            }
+            detailWindow.showIndex = i;
+            detailWindow.sprite = Sprite::create("btn02_03_s_bl.png");
+            detailWindow.sprite->setAnchorPoint(Vec2(0.0, 0.0));
+            detailWindow.sprite->setPosition(detailWindow.point);
+            detailWindow.size = Size(window[i].sprite->getContentSize().width * detailWindow.scaleRate,
+                                     window[i].sprite->getContentSize().height * detailWindow.scaleRate);
+            detailWindow.sprite->setScale(detailWindow.scaleRate);
+            this->addChild(detailWindow.sprite, 1);
+
+            auto character = gameStatus.Charactors->begin();
+            for(int j = 0; j < i; j++)
+            {
+                character++;
+            }
+            detailWindow.HPLabel.label = Label::createWithTTF("", "fonts/msgothic.ttc", 10);
+            auto str = String();
+            str.appendWithFormat("HP:%d/%d", character.operator*()->Hp, character.operator*()->MaxHp);
+            detailWindow.HPLabel.label->setString(str.getCString());
+            detailWindow.HPLabel.label->setAnchorPoint(Vec2(0.0, 0.0));
+            detailWindow.HPLabel.point = Vec2(detailWindow.point.x + detailWindow.point.x / 10.0,
+                                              detailWindow.point.y + detailWindow.size.height - detailWindow.size.height / 10.0);
+            detailWindow.HPLabel.label->setPosition(detailWindow.HPLabel.point);
+            this->addChild(detailWindow.HPLabel.label, 10);
+
+            detailWindow.MPLabel.label = Label::createWithTTF("", "fonts/msgothic.ttc", 10);
+            str = String();
+            str.appendWithFormat("MP:%d/%d", character.operator*()->Mp, character.operator*()->MaxMp);
+            detailWindow.MPLabel.label->setString(str.getCString());
+            detailWindow.MPLabel.label->setAnchorPoint(Vec2(0.0, 0.0));
+            detailWindow.MPLabel.point = Vec2(detailWindow.point.x + detailWindow.point.x / 10.0,
+              detailWindow.point.y + detailWindow.size.height - detailWindow.HPLabel.label->getContentSize().height - detailWindow.size.height / 10.0);
+            detailWindow.MPLabel.label->setPosition(detailWindow.MPLabel.point);
+            this->addChild(detailWindow.MPLabel.label, 10);
+        }
+    }
 
     return true;
 }
 
-void HelloWorld::menuCloseCallback(Ref* pSender)
+bool HomeScene::isTouch(cocos2d::Vec2 location, CharaWindow *charaWindow)
+{
+    if(location.x >= charaWindow->point.x && location.x <= charaWindow->point.x + charaWindow->size.width
+        && location.y >= charaWindow->point.y && location.y <= charaWindow->point.y + charaWindow->size.height)
+    {
+        return true;
+    }
+    return false;
+}
+
+void HomeScene::menuCloseCallback(Ref* pSender)
 {
     //Close the cocos2d-x game scene and quit the application
     Director::getInstance()->end();
