@@ -29,12 +29,17 @@
 #include "GameStatusData/GameStatus.h"
 #include "UIParts/CharaWindow.h"
 #include "UIParts/CharaDetailWindow.h"
+#include "UIParts/MenuButton.h"
 
 class HomeScene : public cocos2d::Scene
 {
 private:
     CharaWindow window[4];
     CharaDetailWindow detailWindow;
+    MenuButton homeButton;
+    MenuButton charaButton;
+    MenuButton equipButton;
+    MenuButton questButton;
 private:
     bool onTouchBegan(cocos2d::Touch*, cocos2d::Event*);
     bool isTouch(cocos2d::Vec2 location, CharaWindow* charaWindow);

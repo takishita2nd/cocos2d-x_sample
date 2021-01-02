@@ -16,6 +16,9 @@ typedef struct _CharaDetailWindow {
     float scaleRate;
     ParameterLabel HPLabel;
     ParameterLabel MPLabel;
+    ParameterLabel AttackLabel;
+    ParameterLabel MagicLabel;
+    ParameterLabel SpeedLabel;
     bool isShow;
     int showIndex;
 } CharaDetailWindow;

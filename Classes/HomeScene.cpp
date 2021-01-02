@@ -74,65 +74,54 @@ bool HomeScene::init()
     // ボタンの配置
     float buttonScale = visibleSize.height / (visibleSize.height / 4.0);
     float buttonBase = 0.0;
-    auto homeButton = Sprite::create("btnHome.png");
-    if (homeButton == nullptr)
+
+    homeButton.sprite = Sprite::create("btnHome.png");
+    if(homeButton.sprite != nullptr)
     {
-        problemLoading("'btnHome.png'");
-    }
-    else
-    {
-        homeButton->setPosition(Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x, visibleSize.height + origin.y));
-        homeButton->setAnchorPoint(Vec2(1.0,1.0));
-        homeButton->setScale(buttonScale);
-        buttonBase = visibleSize.height - homeButton->getContentSize().height * buttonScale;
-        this->addChild(homeButton, 1);
+        homeButton.sprite->setAnchorPoint(Vec2(1.0,1.0));
+        homeButton.point = Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x, visibleSize.height + origin.y);
+        homeButton.sprite->setPosition(homeButton.point);
+        homeButton.size = Size(homeButton.sprite->getContentSize().width * buttonScale, homeButton.sprite->getContentSize().height * buttonScale);
+        homeButton.sprite->setScale(buttonScale);
+        buttonBase = visibleSize.height - homeButton.size.height;
+        this->addChild(homeButton.sprite, 1);
     }
 
-    auto charaButton = Sprite::create("btnChara.png");
-    if (charaButton == nullptr)
+    charaButton.sprite = Sprite::create("btnChara.png");
+    if (charaButton.sprite != nullptr)
     {
-        problemLoading("'btnChara.png'");
-    }
-    else
-    {
-        charaButton->setPosition(Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x,
-                                      buttonBase + origin.y));
-        charaButton->setAnchorPoint(Vec2(1.0,1.0));
-        charaButton->setScale(buttonScale);
-        buttonBase -= charaButton->getContentSize().height * buttonScale;
-        this->addChild(charaButton, 1);
+        charaButton.sprite->setAnchorPoint(Vec2(1.0,1.0));
+        charaButton.point = Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x, buttonBase + origin.y);
+        charaButton.sprite->setPosition(charaButton.point);
+        charaButton.size = Size(charaButton.sprite->getContentSize().width * buttonScale, charaButton.sprite->getContentSize().height * buttonScale);
+        charaButton.sprite->setScale(buttonScale);
+        buttonBase -= charaButton.size.height;
+        this->addChild(charaButton.sprite, 1);
     }
 
-    auto equipButton = Sprite::create("btnEquip.png");
-    if (equipButton == nullptr)
+    equipButton.sprite = Sprite::create("btnEquip.png");
+    if (equipButton.sprite != nullptr)
     {
-        problemLoading("'btnEquip.png'");
-    }
-    else
-    {
-        equipButton->setPosition(Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x,
-                                      buttonBase + origin.y));
-        equipButton->setAnchorPoint(Vec2(1.0,1.0));
-        equipButton->setScale(buttonScale);
-        buttonBase -= equipButton->getContentSize().height * buttonScale;
-        this->addChild(equipButton, 1);
+        equipButton.sprite->setAnchorPoint(Vec2(1.0,1.0));
+        equipButton.point = Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x, buttonBase + origin.y);
+        equipButton.sprite->setPosition(equipButton.point);
+        equipButton.size = Size(equipButton.sprite->getContentSize().width * buttonScale, equipButton.sprite->getContentSize().height * buttonScale);
+        equipButton.sprite->setScale(buttonScale);
+        buttonBase -= equipButton.size.height;
+        this->addChild(equipButton.sprite, 1);
     }
 
-    float questButtonScale;
-    auto questButton = Sprite::create("btnQuest.png");
-    if (questButton == nullptr)
+    questButton.sprite = Sprite::create("btnQuest.png");
+    if (questButton.sprite != nullptr)
     {
-        problemLoading("'btnQuest.png'");
-    }
-    else
-    {
-        auto questButtonScale = buttonBase / questButton->getContentSize().height;
-        questButton->setPosition(Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x,
-                                      buttonBase + origin.y));
-        questButton->setAnchorPoint(Vec2(1.0,1.0));
-        questButton->setScale(questButtonScale);
-
-        this->addChild(questButton, 1);
+        questButton.sprite->setAnchorPoint(Vec2(1.0,1.0));
+        auto questButtonScale = buttonBase / questButton.sprite->getContentSize().height;
+        questButton.point = Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x,
+                                 buttonBase + origin.y);
+        questButton.sprite->setPosition(questButton.point);
+        questButton.size = Size(questButton.sprite->getContentSize().width * questButtonScale, questButton.sprite->getContentSize().height * questButtonScale);
+        questButton.sprite->setScale(questButtonScale);
+        this->addChild(questButton.sprite, 1);
     }
 
     // ステータスウィンドウの配置
@@ -216,6 +205,9 @@ bool HomeScene::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
         this->removeChild(detailWindow.sprite);
         this->removeChild(detailWindow.HPLabel.label);
         this->removeChild(detailWindow.MPLabel.label);
+        this->removeChild(detailWindow.AttackLabel.label);
+        this->removeChild(detailWindow.MagicLabel.label);
+        this->removeChild(detailWindow.SpeedLabel.label);
     }
 
     for(int i = 0; i < 4; i++)
@@ -257,10 +249,40 @@ bool HomeScene::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
             str.appendWithFormat("MP:%d/%d", character.operator*()->Mp, character.operator*()->MaxMp);
             detailWindow.MPLabel.label->setString(str.getCString());
             detailWindow.MPLabel.label->setAnchorPoint(Vec2(0.0, 0.0));
-            detailWindow.MPLabel.point = Vec2(detailWindow.point.x + detailWindow.point.x / 10.0,
-              detailWindow.point.y + detailWindow.size.height - detailWindow.HPLabel.label->getContentSize().height - detailWindow.size.height / 10.0);
+            detailWindow.MPLabel.point = Vec2(detailWindow.HPLabel.point.x,
+                                              detailWindow.HPLabel.point.y - detailWindow.HPLabel.label->getContentSize().height);
             detailWindow.MPLabel.label->setPosition(detailWindow.MPLabel.point);
             this->addChild(detailWindow.MPLabel.label, 10);
+
+            detailWindow.AttackLabel.label = Label::createWithTTF("", "fonts/msgothic.ttc", 10);
+            str = String();
+            str.appendWithFormat("攻撃力:%d", character.operator*()->Power);
+            detailWindow.AttackLabel.label->setString(str.getCString());
+            detailWindow.AttackLabel.label->setAnchorPoint(Vec2(0.0, 0.0));
+            detailWindow.AttackLabel.point = Vec2(detailWindow.HPLabel.point.x,
+                                              detailWindow.MPLabel.point.y - detailWindow.MPLabel.label->getContentSize().height);
+            detailWindow.AttackLabel.label->setPosition(detailWindow.AttackLabel.point);
+            this->addChild(detailWindow.AttackLabel.label, 10);
+
+            detailWindow.MagicLabel.label = Label::createWithTTF("", "fonts/msgothic.ttc", 10);
+            str = String();
+            str.appendWithFormat("魔力:%d", character.operator*()->Magic);
+            detailWindow.MagicLabel.label->setString(str.getCString());
+            detailWindow.MagicLabel.label->setAnchorPoint(Vec2(0.0, 0.0));
+            detailWindow.MagicLabel.point = Vec2(detailWindow.HPLabel.point.x,
+                                                  detailWindow.AttackLabel.point.y - detailWindow.AttackLabel.label->getContentSize().height);
+            detailWindow.MagicLabel.label->setPosition(detailWindow.MagicLabel.point);
+            this->addChild(detailWindow.MagicLabel.label, 10);
+
+            detailWindow.SpeedLabel.label = Label::createWithTTF("", "fonts/msgothic.ttc", 10);
+            str = String();
+            str.appendWithFormat("スピード:%d", character.operator*()->Speed);
+            detailWindow.SpeedLabel.label->setString(str.getCString());
+            detailWindow.SpeedLabel.label->setAnchorPoint(Vec2(0.0, 0.0));
+            detailWindow.SpeedLabel.point = Vec2(detailWindow.HPLabel.point.x,
+                                                 detailWindow.MagicLabel.point.y - detailWindow.MagicLabel.label->getContentSize().height);
+            detailWindow.SpeedLabel.label->setPosition(detailWindow.SpeedLabel.point);
+            this->addChild(detailWindow.SpeedLabel.label, 10);
         }
     }
 
