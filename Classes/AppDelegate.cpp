@@ -133,6 +133,7 @@ void AppDelegate::applicationDidEnterBackground() {
     Director::getInstance()->stopAnimation();
 
     destroyDamadata();
+    deleteMock();
 
 #if USE_AUDIO_ENGINE
     AudioEngine::pauseAll();

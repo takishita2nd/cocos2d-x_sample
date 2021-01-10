@@ -6,6 +6,7 @@
 #define PROJ_ANDROID_CHARAWINDOW_H
 
 #include "cocos2d.h"
+#include "UIParts/Common.h"
 #include "GameStatusData/Character.h"
 
 typedef struct _ParameterLabel {
@@ -14,9 +15,7 @@ typedef struct _ParameterLabel {
 } ParameterLabel;
 
 typedef struct _CharaWindow {
-    cocos2d::Sprite* sprite;
-    cocos2d::Vec2 point;
-    cocos2d::Size size;
+    Parts parts;
     ParameterLabel HPLabel;
     ParameterLabel MPLabel;
 } CharaWindow;

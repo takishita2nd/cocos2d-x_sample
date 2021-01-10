@@ -50,6 +50,9 @@ bool HomeScene::init()
         return false;
     }
 
+    detailWindow.parts.isShow = false;
+    questListMenu.parts.isShow = false;
+
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
@@ -75,53 +78,55 @@ bool HomeScene::init()
     float buttonScale = visibleSize.height / (visibleSize.height / 4.0);
     float buttonBase = 0.0;
 
-    homeButton.sprite = Sprite::create("btnHome.png");
-    if(homeButton.sprite != nullptr)
+    homeButton.parts.sprite = Sprite::create("btnHome.png");
+    if(homeButton.parts.sprite != nullptr)
     {
-        homeButton.sprite->setAnchorPoint(Vec2(1.0,1.0));
-        homeButton.point = Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x, visibleSize.height + origin.y);
-        homeButton.sprite->setPosition(homeButton.point);
-        homeButton.size = Size(homeButton.sprite->getContentSize().width * buttonScale, homeButton.sprite->getContentSize().height * buttonScale);
-        homeButton.sprite->setScale(buttonScale);
-        buttonBase = visibleSize.height - homeButton.size.height;
-        this->addChild(homeButton.sprite, 1);
+        homeButton.parts.sprite->setAnchorPoint(Vec2(1.0,1.0));
+        homeButton.parts.point = Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x, visibleSize.height + origin.y);
+        homeButton.parts.sprite->setPosition(homeButton.parts.point);
+        homeButton.parts.size = Size(homeButton.parts.sprite->getContentSize().width * buttonScale, homeButton.parts.sprite->getContentSize().height * buttonScale);
+        homeButton.parts.sprite->setScale(buttonScale);
+        buttonBase = visibleSize.height - homeButton.parts.size.height;
+        this->addChild(homeButton.parts.sprite, 1);
     }
 
-    charaButton.sprite = Sprite::create("btnChara.png");
-    if (charaButton.sprite != nullptr)
+    charaButton.parts.sprite = Sprite::create("btnChara.png");
+    if (charaButton.parts.sprite != nullptr)
     {
-        charaButton.sprite->setAnchorPoint(Vec2(1.0,1.0));
-        charaButton.point = Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x, buttonBase + origin.y);
-        charaButton.sprite->setPosition(charaButton.point);
-        charaButton.size = Size(charaButton.sprite->getContentSize().width * buttonScale, charaButton.sprite->getContentSize().height * buttonScale);
-        charaButton.sprite->setScale(buttonScale);
-        buttonBase -= charaButton.size.height;
-        this->addChild(charaButton.sprite, 1);
+        charaButton.parts.sprite->setAnchorPoint(Vec2(1.0,1.0));
+        charaButton.parts.point = Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x, buttonBase + origin.y);
+        charaButton.parts.sprite->setPosition(charaButton.parts.point);
+        charaButton.parts.size = Size(charaButton.parts.sprite->getContentSize().width * buttonScale, charaButton.parts.sprite->getContentSize().height * buttonScale);
+        charaButton.parts.sprite->setScale(buttonScale);
+        buttonBase -= charaButton.parts.size.height;
+        this->addChild(charaButton.parts.sprite, 1);
     }
 
-    equipButton.sprite = Sprite::create("btnEquip.png");
-    if (equipButton.sprite != nullptr)
+    equipButton.parts.sprite = Sprite::create("btnEquip.png");
+    if (equipButton.parts.sprite != nullptr)
     {
-        equipButton.sprite->setAnchorPoint(Vec2(1.0,1.0));
-        equipButton.point = Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x, buttonBase + origin.y);
-        equipButton.sprite->setPosition(equipButton.point);
-        equipButton.size = Size(equipButton.sprite->getContentSize().width * buttonScale, equipButton.sprite->getContentSize().height * buttonScale);
-        equipButton.sprite->setScale(buttonScale);
-        buttonBase -= equipButton.size.height;
-        this->addChild(equipButton.sprite, 1);
+        equipButton.parts.sprite->setAnchorPoint(Vec2(1.0,1.0));
+        equipButton.parts.point = Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x, buttonBase + origin.y);
+        equipButton.parts.sprite->setPosition(equipButton.parts.point);
+        equipButton.parts.size = Size(equipButton.parts.sprite->getContentSize().width * buttonScale, equipButton.parts.sprite->getContentSize().height * buttonScale);
+        equipButton.parts.sprite->setScale(buttonScale);
+        buttonBase -= equipButton.parts.size.height;
+        this->addChild(equipButton.parts.sprite, 1);
     }
 
-    questButton.sprite = Sprite::create("btnQuest.png");
-    if (questButton.sprite != nullptr)
+    questButton.parts.sprite = Sprite::create("btnQuest.png");
+    if (questButton.parts.sprite != nullptr)
     {
-        questButton.sprite->setAnchorPoint(Vec2(1.0,1.0));
-        auto questButtonScale = buttonBase / questButton.sprite->getContentSize().height;
-        questButton.point = Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x,
+        questButton.parts.sprite->setAnchorPoint(Vec2(1.0,1.0));
+        auto questButtonScale = buttonBase / questButton.parts.sprite->getContentSize().height;
+        questButton.parts.point = Vec2(sprite->getPosition().x + sprite->getContentSize().width * scaleRate / 2 + origin.x,
                                  buttonBase + origin.y);
-        questButton.sprite->setPosition(questButton.point);
-        questButton.size = Size(questButton.sprite->getContentSize().width * questButtonScale, questButton.sprite->getContentSize().height * questButtonScale);
-        questButton.sprite->setScale(questButtonScale);
-        this->addChild(questButton.sprite, 1);
+        questButton.parts.sprite->setPosition(questButton.parts.point);
+        questButton.parts.size = Size(questButton.parts.sprite->getContentSize().width * questButtonScale, questButton.parts.sprite->getContentSize().height * questButtonScale);
+        questButton.parts.point = Vec2(questButton.parts.point.x - questButton.parts.size.width,
+                                       questButton.parts.point.y - questButton.parts.size.height);
+        questButton.parts.sprite->setScale(questButtonScale);
+        this->addChild(questButton.parts.sprite, 1);
     }
 
     // ステータスウィンドウの配置
@@ -129,26 +134,26 @@ bool HomeScene::init()
 
     auto chara = gameStatus.Charactors->begin();
     for(int i = 0; i < 4; i++) {
-        window[i].sprite = cocos2d::Sprite::create("btn02_03_s_bl.png");
-        if (window[i].sprite != nullptr)
+        window[i].parts.sprite = cocos2d::Sprite::create("btn02_03_s_bl.png");
+        if (window[i].parts.sprite != nullptr)
         {
-            auto scaleRate = (visibleSize.height / 4) / window[i].sprite->getContentSize().height;
-            window[i].point = Vec2(xpos + origin.x,
-                                   origin.y + window[i].sprite->getContentSize().height * scaleRate * i);
-            window[i].size = Size(window[i].sprite->getContentSize().width * scaleRate,
-                                  window[i].sprite->getContentSize().height * scaleRate);
-            window[i].sprite->setAnchorPoint(Vec2(0,0));
-            window[i].sprite->setScale(scaleRate);
-            window[i].sprite->setPosition(window[i].point);
-            this->addChild(window[i].sprite);
+            auto scaleRate = (visibleSize.height / 4) / window[i].parts.sprite->getContentSize().height;
+            window[i].parts.point = Vec2(xpos + origin.x,
+                                   origin.y + window[i].parts.sprite->getContentSize().height * scaleRate * i);
+            window[i].parts.size = Size(window[i].parts.sprite->getContentSize().width * scaleRate,
+                                  window[i].parts.sprite->getContentSize().height * scaleRate);
+            window[i].parts.sprite->setAnchorPoint(Vec2(0,0));
+            window[i].parts.sprite->setScale(scaleRate);
+            window[i].parts.sprite->setPosition(window[i].parts.point);
+            this->addChild(window[i].parts.sprite);
 
             window[i].HPLabel.label = Label::createWithTTF("", "fonts/msgothic.ttc", 10);
             auto str = String();
             str.appendWithFormat("HP:%d/%d", chara.operator*()->Hp, chara.operator*()->MaxHp);
             window[i].HPLabel.label->setString(str.getCString());
             window[i].HPLabel.label->setAnchorPoint(Vec2(0.0, 1.0));
-            window[i].HPLabel.point = Vec2(window[i].point.x + window[i].point.x / 10.0,
-                                           window[i].point.y + window[i].size.height - window[i].size.height / 20.0);
+            window[i].HPLabel.point = Vec2(window[i].parts.point.x + window[i].parts.point.x / 10.0,
+                                           window[i].parts.point.y + window[i].parts.size.height - window[i].parts.size.height / 20.0);
             window[i].HPLabel.label->setPosition(window[i].HPLabel.point);
             this->addChild(window[i].HPLabel.label, 10);
 
@@ -157,17 +162,19 @@ bool HomeScene::init()
             str.appendWithFormat("MP:%d/%d", chara.operator*()->Mp, chara.operator*()->MaxMp);
             window[i].MPLabel.label->setString(str.getCString());
             window[i].MPLabel.label->setAnchorPoint(Vec2(0.0, 1.0));
-            window[i].MPLabel.point = Vec2(window[i].point.x + window[i].point.x / 10.0,
-                    window[i].HPLabel.label->getPosition().y - window[i].HPLabel.label->getContentSize().height - window[i].size.height / 20.0);
+            window[i].MPLabel.point = Vec2(window[i].parts.point.x + window[i].parts.point.x / 10.0,
+                    window[i].HPLabel.label->getPosition().y - window[i].HPLabel.label->getContentSize().height - window[i].parts.size.height / 20.0);
             window[i].MPLabel.label->setPosition(window[i].MPLabel.point);
             this->addChild(window[i].MPLabel.label, 10);
         }
         chara++;
     }
 
-    detailWindow.scaleRate = visibleSize.height / window[0].sprite->getContentSize().height;
-    detailWindow.point = Vec2(xpos + origin.x + window[0].size.width, origin.y);
-    detailWindow.isShow = false;
+    detailWindow.scaleRate = visibleSize.height / window[0].parts.sprite->getContentSize().height;
+    questListMenu.scaleRate = detailWindow.scaleRate;
+    detailWindow.parts.point = Vec2(xpos + origin.x + window[0].parts.size.width, visibleSize.height + origin.y);
+    questListMenu.parts.point = detailWindow.parts.point;
+    detailWindow.parts.isShow = false;
     detailWindow.showIndex = -1;
 
     return true;
@@ -177,32 +184,11 @@ bool HomeScene::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
 {
     log("touch(%f, %f)", touch->getLocation().x, touch->getLocation().y);
 
-    auto anime = Sprite::create("pipo-btleffect007.png");
-    if (anime == nullptr)
-    {
-        problemLoading("'pipo-btleffect007.png'");
-    }
-    else
-    {
-        this->addChild(anime, 255);
-    }
-    float frameHeight = anime->getContentSize().height;
-    float frameWidth = anime->getContentSize().width / 15.0;
-    Vector<SpriteFrame*> animFrames;
-    animFrames.reserve(15);
-    for(int i = 0; i < 15; i++)
-    {
-        animFrames.pushBack(SpriteFrame::create("pipo-btleffect007.png", Rect(frameWidth * i,0,frameHeight,frameWidth)));
-    }
-    Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.02f);
-    Animate* animate = Animate::create(animation);
+    actionTouchAnime(touch->getLocation());
 
-    anime->setPosition(touch->getLocation().x, touch->getLocation().y);
-    anime->runAction(animate);
-
-    if(detailWindow.isShow)
+    if(detailWindow.parts.isShow)
     {
-        this->removeChild(detailWindow.sprite);
+        this->removeChild(detailWindow.parts.sprite);
         this->removeChild(detailWindow.HPLabel.label);
         this->removeChild(detailWindow.MPLabel.label);
         this->removeChild(detailWindow.AttackLabel.label);
@@ -212,22 +198,22 @@ bool HomeScene::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
 
     for(int i = 0; i < 4; i++)
     {
-        if(isTouch(touch->getLocation(), &window[i]))
+        if(isTouch(touch->getLocation(), &(window[i].parts)))
         {
-            detailWindow.isShow = true;
+            detailWindow.parts.isShow = true;
             if(detailWindow.showIndex == i)
             {
                 detailWindow.showIndex = -1;
                 break;
             }
             detailWindow.showIndex = i;
-            detailWindow.sprite = Sprite::create("btn02_03_s_bl.png");
-            detailWindow.sprite->setAnchorPoint(Vec2(0.0, 0.0));
-            detailWindow.sprite->setPosition(detailWindow.point);
-            detailWindow.size = Size(window[i].sprite->getContentSize().width * detailWindow.scaleRate,
-                                     window[i].sprite->getContentSize().height * detailWindow.scaleRate);
-            detailWindow.sprite->setScale(detailWindow.scaleRate);
-            this->addChild(detailWindow.sprite, 1);
+            detailWindow.parts.sprite = Sprite::create("btn02_03_s_bl.png");
+            detailWindow.parts.sprite->setAnchorPoint(Vec2(0.0, 0.0));
+            detailWindow.parts.sprite->setPosition(detailWindow.parts.point);
+            detailWindow.parts.size = Size(detailWindow.parts.sprite->getContentSize().width * detailWindow.scaleRate,
+                                           detailWindow.parts.sprite->getContentSize().height * detailWindow.scaleRate);
+            detailWindow.parts.sprite->setScale(detailWindow.scaleRate);
+            this->addChild(detailWindow.parts.sprite, 1);
 
             auto character = gameStatus.Charactors->begin();
             for(int j = 0; j < i; j++)
@@ -239,8 +225,8 @@ bool HomeScene::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
             str.appendWithFormat("HP:%d/%d", character.operator*()->Hp, character.operator*()->MaxHp);
             detailWindow.HPLabel.label->setString(str.getCString());
             detailWindow.HPLabel.label->setAnchorPoint(Vec2(0.0, 0.0));
-            detailWindow.HPLabel.point = Vec2(detailWindow.point.x + detailWindow.point.x / 10.0,
-                                              detailWindow.point.y + detailWindow.size.height - detailWindow.size.height / 10.0);
+            detailWindow.HPLabel.point = Vec2(detailWindow.parts.point.x + detailWindow.parts.point.x / 10.0,
+                                              detailWindow.parts.point.y + detailWindow.parts.size.height - detailWindow.parts.size.height / 10.0);
             detailWindow.HPLabel.label->setPosition(detailWindow.HPLabel.point);
             this->addChild(detailWindow.HPLabel.label, 10);
 
@@ -286,13 +272,54 @@ bool HomeScene::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
         }
     }
 
+    if(isTouch(touch->getLocation(), &(questButton.parts)))
+    {
+        log("touch questButton");
+        auto questList = getQuestList();
+        auto questName = questList->begin();
+        questListMenu.questListMenu->parts.sprite = Sprite::create("btn02_03_s_bl.png");
+        questListMenu.questListMenu->parts.sprite->setAnchorPoint(Vec2(0.0, 1.0));
+        questListMenu.questListMenu->parts.point = questListMenu.parts.point;
+        questListMenu.questListMenu->parts.sprite->setPosition(questListMenu.questListMenu->parts.point);
+        questListMenu.questListMenu->parts.size = Size(questListMenu.questListMenu->parts.sprite->getContentSize().width * questListMenu.scaleRate,
+                                                       questListMenu.questListMenu->parts.sprite->getContentSize().height);
+        questListMenu.questListMenu->parts.sprite->setScale(questListMenu.scaleRate, 1);
+        this->addChild(questListMenu.questListMenu->parts.sprite, 5);
+    }
+
     return true;
 }
 
-bool HomeScene::isTouch(cocos2d::Vec2 location, CharaWindow *charaWindow)
+void HomeScene::actionTouchAnime(cocos2d::Vec2 location)
 {
-    if(location.x >= charaWindow->point.x && location.x <= charaWindow->point.x + charaWindow->size.width
-        && location.y >= charaWindow->point.y && location.y <= charaWindow->point.y + charaWindow->size.height)
+    auto anime = Sprite::create("pipo-btleffect007.png");
+    if (anime == nullptr)
+    {
+        problemLoading("'pipo-btleffect007.png'");
+    }
+    else
+    {
+        this->addChild(anime, 255);
+    }
+    float frameHeight = anime->getContentSize().height;
+    float frameWidth = anime->getContentSize().width / 15.0;
+    Vector<SpriteFrame*> animFrames;
+    animFrames.reserve(15);
+    for(int i = 0; i < 15; i++)
+    {
+        animFrames.pushBack(SpriteFrame::create("pipo-btleffect007.png", Rect(frameWidth * i,0,frameHeight,frameWidth)));
+    }
+    Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.02f);
+    Animate* animate = Animate::create(animation);
+
+    anime->setPosition(location.x, location.y);
+    anime->runAction(animate);
+}
+
+bool HomeScene::isTouch(cocos2d::Vec2 location, Parts *parts)
+{
+    if(location.x >= parts->point.x && location.x <= parts->point.x + parts->size.width
+        && location.y >= parts->point.y && location.y <= parts->point.y + parts->size.height)
     {
         return true;
     }

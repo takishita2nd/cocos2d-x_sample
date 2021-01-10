@@ -7,19 +7,17 @@
 
 #include "cocos2d.h"
 #include "GameStatusData/Character.h"
+#include "UIParts/Common.h"
 #include "UIParts/CharaWindow.h"
 
 typedef struct _CharaDetailWindow {
-    cocos2d::Sprite* sprite;
-    cocos2d::Vec2 point;
-    cocos2d::Size size;
+    Parts parts;
     float scaleRate;
     ParameterLabel HPLabel;
     ParameterLabel MPLabel;
     ParameterLabel AttackLabel;
     ParameterLabel MagicLabel;
     ParameterLabel SpeedLabel;
-    bool isShow;
     int showIndex;
 } CharaDetailWindow;
 

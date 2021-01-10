@@ -52,14 +52,19 @@ list(APPEND GAME_SOURCE
      Classes/HomeScene.cpp
      Classes/GameStatusData/Character.cpp
      Classes/GameStatusData/GameStatus.cpp
+     Classes/GameStatusData/Mock.cpp
      )
 list(APPEND GAME_HEADER
      Classes/AppDelegate.h
      Classes/HomeScene.h
+     Classes/GameStatusData/CommonParameter.h
      Classes/GameStatusData/Character.h
      Classes/GameStatusData/GameStatus.h
+     Classes/GameStatusData/Mock.h
+     Classes/UIParts/Common.h
      Classes/UIParts/CharaWindow.h
      Classes/UIParts/CharaDetailWindow.h
+     Classes/UIParts/QuestListMenu.h
      )
 
 if(ANDROID)

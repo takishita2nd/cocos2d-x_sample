@@ -6,11 +6,10 @@
 #define PROJ_ANDROID_MENUBUTTON_H
 
 #include "cocos2d.h"
+#include "UIParts/Common.h"
 
 typedef struct _MenuButton {
-    cocos2d::Sprite* sprite;
-    cocos2d::Vec2 point;
-    cocos2d::Size size;
+    Parts parts;
 } MenuButton;
 
 #endif //PROJ_ANDROID_MENUBUTTON_H

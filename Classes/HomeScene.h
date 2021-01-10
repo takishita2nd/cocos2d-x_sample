@@ -25,11 +25,14 @@
 #ifndef __HELLOWORLD_SCENE_H__
 #define __HELLOWORLD_SCENE_H__
 
+#include <list>
 #include "cocos2d.h"
 #include "GameStatusData/GameStatus.h"
+#include "GameStatusData/Mock.h"
 #include "UIParts/CharaWindow.h"
 #include "UIParts/CharaDetailWindow.h"
 #include "UIParts/MenuButton.h"
+#include "UIParts/QuestListMenu.h"
 
 class HomeScene : public cocos2d::Scene
 {
@@ -40,9 +43,11 @@ private:
     MenuButton charaButton;
     MenuButton equipButton;
     MenuButton questButton;
+    QuestList questListMenu;
 private:
     bool onTouchBegan(cocos2d::Touch*, cocos2d::Event*);
-    bool isTouch(cocos2d::Vec2 location, CharaWindow* charaWindow);
+    bool isTouch(cocos2d::Vec2 location, Parts *parts);
+    void actionTouchAnime(cocos2d::Vec2 location);
 
 public:
     static cocos2d::Scene* createScene();

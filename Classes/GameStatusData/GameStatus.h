@@ -5,11 +5,11 @@
 #ifndef PROJ_ANDROID_GAMESTATUS_H
 #define PROJ_ANDROID_GAMESTATUS_H
 
+#include <list>
 #include "cocos2d.h"
 #include "Character.h"
-#include <list>
 
-typedef struct GameStatus{
+typedef struct _GameStatus{
     std::list<Character*> *Charactors;
 } GameStatus;
 

@@ -1,0 +1,10 @@
+//
+// Created by ntaki on 2021/01/10.
+//
+
+#ifndef PROJ_ANDROID_COMMONPARAMETER_H
+#define PROJ_ANDROID_COMMONPARAMETER_H
+
+#define QUEST_NUM 10
+
+#endif //PROJ_ANDROID_COMMONPARAMETER_H
