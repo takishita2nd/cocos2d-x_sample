@@ -274,17 +274,31 @@ bool HomeScene::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
 
     if(isTouch(touch->getLocation(), &(questButton.parts)))
     {
-        log("touch questButton");
         auto questList = getQuestList();
         auto questName = questList->begin();
-        questListMenu.questListMenu->parts.sprite = Sprite::create("btn02_03_s_bl.png");
-        questListMenu.questListMenu->parts.sprite->setAnchorPoint(Vec2(0.0, 1.0));
-        questListMenu.questListMenu->parts.point = questListMenu.parts.point;
-        questListMenu.questListMenu->parts.sprite->setPosition(questListMenu.questListMenu->parts.point);
-        questListMenu.questListMenu->parts.size = Size(questListMenu.questListMenu->parts.sprite->getContentSize().width * questListMenu.scaleRate,
-                                                       questListMenu.questListMenu->parts.sprite->getContentSize().height);
-        questListMenu.questListMenu->parts.sprite->setScale(questListMenu.scaleRate, 1);
-        this->addChild(questListMenu.questListMenu->parts.sprite, 5);
+        for(int i = 0; i < questList->size(); i++)
+        {
+            log("loop");
+            questListMenu.questListMenu[i].parts.sprite = Sprite::create("btn02_03_s_bl.png");
+            questListMenu.questListMenu[i].parts.sprite->setAnchorPoint(Vec2(0.0, 0.0));
+            questListMenu.questListMenu[i].parts.size = Size(questListMenu.questListMenu->parts.sprite->getContentSize().width * questListMenu.scaleRate,
+                                                           questListMenu.questListMenu->parts.sprite->getContentSize().height);
+            questListMenu.questListMenu[i].parts.point = Vec2(questListMenu.parts.point.x, questListMenu.parts.point.y - questListMenu.questListMenu->parts.sprite->getContentSize().height * (i + 1));
+            questListMenu.questListMenu[i].parts.sprite->setPosition(questListMenu.questListMenu[i].parts.point);
+            questListMenu.questListMenu[i].parts.sprite->setScale(questListMenu.scaleRate, 1);
+            this->addChild(questListMenu.questListMenu[i].parts.sprite, 5);
+
+            questListMenu.questListMenu[i].questName.label = Label::createWithTTF("", "fonts/msgothic.ttc", 18);
+            auto str = String();
+            str.appendWithFormat("%s", questName.operator*());
+            questListMenu.questListMenu[i].questName.label->setString(str.getCString());
+            questListMenu.questListMenu[i].questName.label->setAnchorPoint(Vec2(0.0, -0.3));
+            questListMenu.questListMenu[i].questName.point = Vec2(questListMenu.questListMenu[i].parts.point.x + questListMenu.questListMenu[i].parts.size.width / 30.0, questListMenu.questListMenu[i].parts.point.y);
+            questListMenu.questListMenu[i].questName.label->setPosition(questListMenu.questListMenu[i].questName.point);
+            this->addChild(questListMenu.questListMenu[i].questName.label, 6);
+
+            questName++;
+        }
     }
 
     return true;
