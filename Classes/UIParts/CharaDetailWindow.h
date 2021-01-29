@@ -19,6 +19,7 @@ typedef struct _CharaDetailWindow {
     ParameterLabel MagicLabel;
     ParameterLabel SpeedLabel;
     int showIndex;
+    bool isShow;
 } CharaDetailWindow;
 
 #endif //PROJ_ANDROID_CHARADETAILWINDOW_H

@@ -23,6 +23,7 @@ typedef struct _QuestList {
     Parts parts;
     QuestListMenu questListMenu[QUEST_NUM];
     float scaleRate;
+    bool isShow;
 } QuestList;
 
 #endif //PROJ_ANDROID_QESTLISTMENU_H

@@ -10,6 +10,7 @@
 
 typedef struct _MenuButton {
     Parts parts;
+    bool touched;
 } MenuButton;
 
 #endif //PROJ_ANDROID_MENUBUTTON_H

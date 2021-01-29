@@ -44,8 +44,12 @@ private:
     MenuButton equipButton;
     MenuButton questButton;
     QuestList questListMenu;
+
+    cocos2d::Vec2 keepPosition;
 private:
     bool onTouchBegan(cocos2d::Touch*, cocos2d::Event*);
+    void onTouchMoved(cocos2d::Touch*, cocos2d::Event*);
+    void onTouchEnded(cocos2d::Touch*, cocos2d::Event*);
     bool isTouch(cocos2d::Vec2 location, Parts *parts);
     void actionTouchAnime(cocos2d::Vec2 location);
 

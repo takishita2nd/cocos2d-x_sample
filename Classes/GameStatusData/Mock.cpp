@@ -20,7 +20,7 @@ std::list<char*>* getQuestList()
         char* quest7 = "クエスト7";
         char* quest8 = "クエスト8";
         char* quest9 = "クエスト9";
-        char* quest10 = "クエスト20";
+        char* quest10 = "クエスト10";
         questList->push_back(quest1);
         questList->push_back(quest2);
         questList->push_back(quest3);

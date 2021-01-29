@@ -18,6 +18,7 @@ typedef struct _CharaWindow {
     Parts parts;
     ParameterLabel HPLabel;
     ParameterLabel MPLabel;
+    bool touched;
 } CharaWindow;
 
 

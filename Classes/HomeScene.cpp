@@ -72,6 +72,8 @@ bool HomeScene::init()
     // タッチアニメーション
     auto listener1 = EventListenerTouchOneByOne::create();
     listener1->onTouchBegan = CC_CALLBACK_2(HomeScene::onTouchBegan, this);
+    listener1->onTouchMoved = CC_CALLBACK_2(HomeScene::onTouchMoved, this);
+    listener1->onTouchEnded = CC_CALLBACK_2(HomeScene::onTouchEnded, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener1, this);
 
     // ボタンの配置
@@ -274,34 +276,73 @@ bool HomeScene::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
 
     if(isTouch(touch->getLocation(), &(questButton.parts)))
     {
-        auto questList = getQuestList();
-        auto questName = questList->begin();
-        for(int i = 0; i < questList->size(); i++)
-        {
-            log("loop");
-            questListMenu.questListMenu[i].parts.sprite = Sprite::create("btn02_03_s_bl.png");
-            questListMenu.questListMenu[i].parts.sprite->setAnchorPoint(Vec2(0.0, 0.0));
-            questListMenu.questListMenu[i].parts.size = Size(questListMenu.questListMenu->parts.sprite->getContentSize().width * questListMenu.scaleRate,
-                                                           questListMenu.questListMenu->parts.sprite->getContentSize().height);
-            questListMenu.questListMenu[i].parts.point = Vec2(questListMenu.parts.point.x, questListMenu.parts.point.y - questListMenu.questListMenu->parts.sprite->getContentSize().height * (i + 1));
-            questListMenu.questListMenu[i].parts.sprite->setPosition(questListMenu.questListMenu[i].parts.point);
-            questListMenu.questListMenu[i].parts.sprite->setScale(questListMenu.scaleRate, 1);
-            this->addChild(questListMenu.questListMenu[i].parts.sprite, 5);
+        questButton.touched = true;
+    }
 
-            questListMenu.questListMenu[i].questName.label = Label::createWithTTF("", "fonts/msgothic.ttc", 18);
-            auto str = String();
-            str.appendWithFormat("%s", questName.operator*());
-            questListMenu.questListMenu[i].questName.label->setString(str.getCString());
-            questListMenu.questListMenu[i].questName.label->setAnchorPoint(Vec2(0.0, -0.3));
-            questListMenu.questListMenu[i].questName.point = Vec2(questListMenu.questListMenu[i].parts.point.x + questListMenu.questListMenu[i].parts.size.width / 30.0, questListMenu.questListMenu[i].parts.point.y);
-            questListMenu.questListMenu[i].questName.label->setPosition(questListMenu.questListMenu[i].questName.point);
-            this->addChild(questListMenu.questListMenu[i].questName.label, 6);
-
-            questName++;
-        }
+    if(questListMenu.isShow)
+    {
+        keepPosition = touch->getLocation();
     }
 
     return true;
+}
+
+void HomeScene::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event)
+{
+    log("move(%f, %f)", touch->getLocation().x, touch->getLocation().y);
+
+    if(questListMenu.isShow)
+    {
+        // Yの差分だけメニューを動かす
+        float divY = touch->getLocation().y - keepPosition.y;
+        for(int i = 0; i < QUEST_NUM; i++)
+        {
+            questListMenu.questListMenu[i].parts.sprite->setPosition(questListMenu.questListMenu[i].parts.point.x, questListMenu.questListMenu[i].parts.point.y + divY);
+            questListMenu.questListMenu[i].parts.point.y = questListMenu.questListMenu[i].parts.point.y + divY;
+            questListMenu.questListMenu[i].questName.label->setPosition(questListMenu.questListMenu[i].questName.point.x, questListMenu.questListMenu[i].questName.point.y + divY);
+            questListMenu.questListMenu[i].questName.point.y = questListMenu.questListMenu[i].questName.point.y + divY;
+        }
+        keepPosition.y += divY;
+    }
+}
+
+void HomeScene::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *event)
+{
+    log("release(%f, %f)", touch->getLocation().x, touch->getLocation().y);
+
+    if(questButton.touched)
+    {
+        if(isTouch(touch->getLocation(), &(questButton.parts)))
+        {
+            auto questList = getQuestList();
+            auto questName = questList->begin();
+            for(int i = 0; i < questList->size(); i++)
+            {
+                log("loop");
+                questListMenu.questListMenu[i].parts.sprite = Sprite::create("btn02_03_s_bl.png");
+                questListMenu.questListMenu[i].parts.sprite->setAnchorPoint(Vec2(0.0, 0.0));
+                questListMenu.questListMenu[i].parts.size = Size(questListMenu.questListMenu->parts.sprite->getContentSize().width * questListMenu.scaleRate,
+                                                                 questListMenu.questListMenu->parts.sprite->getContentSize().height);
+                questListMenu.questListMenu[i].parts.point = Vec2(questListMenu.parts.point.x, questListMenu.parts.point.y - questListMenu.questListMenu->parts.sprite->getContentSize().height * (i + 1));
+                questListMenu.questListMenu[i].parts.sprite->setPosition(questListMenu.questListMenu[i].parts.point);
+                questListMenu.questListMenu[i].parts.sprite->setScale(questListMenu.scaleRate, 1);
+                this->addChild(questListMenu.questListMenu[i].parts.sprite, 5);
+
+                questListMenu.questListMenu[i].questName.label = Label::createWithTTF("", "fonts/msgothic.ttc", 18);
+                auto str = String();
+                str.appendWithFormat("%s", questName.operator*());
+                questListMenu.questListMenu[i].questName.label->setString(str.getCString());
+                questListMenu.questListMenu[i].questName.label->setAnchorPoint(Vec2(0.0, -0.3));
+                questListMenu.questListMenu[i].questName.point = Vec2(questListMenu.questListMenu[i].parts.point.x + questListMenu.questListMenu[i].parts.size.width / 30.0, questListMenu.questListMenu[i].parts.point.y);
+                questListMenu.questListMenu[i].questName.label->setPosition(questListMenu.questListMenu[i].questName.point);
+                this->addChild(questListMenu.questListMenu[i].questName.label, 6);
+
+                questName++;
+            }
+        }
+        questButton.touched = false;
+        questListMenu.isShow = true;
+    }
 }
 
 void HomeScene::actionTouchAnime(cocos2d::Vec2 location)
